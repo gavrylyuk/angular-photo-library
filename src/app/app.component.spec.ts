@@ -3,12 +3,17 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { appConfig } from './app.config';
+import { PhotoService } from './services/photo.service';
+import { of } from 'rxjs';
 
 describe('AppComponent', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [...appConfig.providers],
+      providers: [
+        ...appConfig.providers,
+        { provide: PhotoService, useValue: { getPhotos: () => of([]) } },
+      ],
     }),
   );
 

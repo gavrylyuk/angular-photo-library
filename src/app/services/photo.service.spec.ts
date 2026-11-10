@@ -7,6 +7,7 @@ import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PhotoService } from './photo.service';
 import { Photo } from '../models/photo';
+import { PHOTO_BATCH_SIZE } from './photo-stream.constants';
 
 const PHOTO_LIST_URL = 'https://picsum.photos/v2/list';
 
@@ -33,7 +34,7 @@ describe('PhotoService', () => {
     try {
       const photos: Photo[] = [];
 
-      service.getPhotos(1, 10).subscribe((result) => {
+      service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe((result) => {
         photos.push(...result);
       });
 
@@ -41,7 +42,7 @@ describe('PhotoService', () => {
         (req) =>
           req.url === PHOTO_LIST_URL &&
           req.params.get('page') === '1' &&
-          req.params.get('limit') === '10',
+          req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
       );
 
       expect(request.request.method).toBe('GET');
@@ -73,7 +74,7 @@ describe('PhotoService', () => {
     try {
       let received = false;
 
-      service.getPhotos(1, 10).subscribe(() => {
+      service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe(() => {
         received = true;
       });
 
@@ -81,7 +82,7 @@ describe('PhotoService', () => {
         (req) =>
           req.url === PHOTO_LIST_URL &&
           req.params.get('page') === '1' &&
-          req.params.get('limit') === '10',
+          req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
       );
 
       request.flush([]);
@@ -102,7 +103,7 @@ describe('PhotoService', () => {
   it('reports an HTTP error to the caller', () => {
     let status: number | undefined;
 
-    service.getPhotos(1, 10).subscribe({
+    service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe({
       error: (error: { status: number }) => {
         status = error.status;
       },
@@ -112,7 +113,7 @@ describe('PhotoService', () => {
       (req) =>
         req.url === PHOTO_LIST_URL &&
         req.params.get('page') === '1' &&
-        req.params.get('limit') === '10',
+        req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
     );
 
     request.flush('Service unavailable', {
@@ -135,7 +136,7 @@ describe('PhotoService', () => {
       try {
         let received = false;
 
-        service.getPhotos(1, 10).subscribe(() => {
+        service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe(() => {
           received = true;
         });
 
