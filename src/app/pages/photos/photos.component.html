@@ -1,1 +1,42 @@
-<p>photos works!</p>
+<div class="photo-grid">
+  @for (photo of store.photos(); track $index) {
+    <img
+      [src]="photoThumbnailUrl(photo.id)"
+      [alt]="'Photo by ' + photo.author"
+      [width]="500"
+      [height]="300"
+      loading="lazy"
+    />
+  }
+</div>
+
+<div #scrollSentinel class="scroll-sentinel" aria-hidden="true"></div>
+
+@if (store.loading()) {
+  <div class="loading" role="status">
+    <mat-spinner aria-hidden="true" diameter="48" />
+    <span class="loading-label">Loading photos…</span>
+  </div>
+}
+
+@if (store.hasError()) {
+  <div>
+    <p role="alert">Unable to load photos. Please try again.</p>
+    <button mat-stroked-button type="button" (click)="store.loadMore()">
+      Retry
+    </button>
+  </div>
+}
+
+@if (!supportsInfiniteScroll && !store.hasError()) {
+  <div class="load-more">
+    <button
+      mat-flat-button
+      type="button"
+      [disabled]="store.loading()"
+      (click)="store.loadMore()"
+    >
+      Load more
+    </button>
+  </div>
+}
