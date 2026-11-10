@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { provideRouter, Router } from '@angular/router';
-import { routes } from './app.routes';
+import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
+import { appConfig } from './app.config';
 
 describe('AppComponent', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter(routes)],
+      providers: [...appConfig.providers],
     }),
   );
 
@@ -40,7 +40,7 @@ describe('AppComponent', () => {
     ).toContain('Favorites');
   });
 
-  it('should render router outlet', async () => {
+  it('marks the current navigation link as active', async () => {
     const fixture = TestBed.createComponent(AppComponent);
     const router = TestBed.inject(Router);
 
