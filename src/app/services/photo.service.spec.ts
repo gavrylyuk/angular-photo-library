@@ -7,13 +7,11 @@ import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PhotoService } from './photo.service';
 import { Photo } from '@app/models/photo';
-import { PHOTO_BATCH_SIZE } from '@app/constants/photo-stream.constants';
 import {
   SIMULATE_PHOTO_DELAY,
   simulatedDelayInterceptor,
 } from '@app/interceptors/simulated-delay.interceptor';
 
-const PHOTO_LIST_URL = 'https://picsum.photos/v2/list';
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {
   id: '1',
@@ -44,122 +42,75 @@ describe('PhotoService', () => {
     http.verify();
   });
 
-  it('requests a page of photos from Picsum', () => {
+  it('requests a random batch using a different seed for each photo', () => {
     vi.useFakeTimers();
 
-    try {
-      const photos: Photo[] = [];
+    const seeds = vi
+      .spyOn(globalThis.crypto, 'randomUUID')
+      .mockReturnValueOnce('00000000-0000-4000-8000-000000000001')
+      .mockReturnValueOnce('00000000-0000-4000-8000-000000000002');
 
-      service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe((result) => {
-        photos.push(...result);
+    try {
+      const received: Photo[][] = [];
+      const secondPhoto: Photo = { ...TEST_PHOTO, id: '2' };
+
+      service.getRandomPhotos(2).subscribe((photos) => {
+        received.push(photos);
       });
 
-      const request = http.expectOne(
-        (req) =>
-          req.url === PHOTO_LIST_URL &&
-          req.params.get('page') === '1' &&
-          req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
+      const first = http.expectOne(
+        'https://picsum.photos/seed/00000000-0000-4000-8000-000000000001/info',
+      );
+      const second = http.expectOne(
+        'https://picsum.photos/seed/00000000-0000-4000-8000-000000000002/info',
       );
 
-      expect(request.request.method).toBe('GET');
-      expect(request.request.context.get(SIMULATE_PHOTO_DELAY)).toBe(true);
-      request.flush([TEST_PHOTO]);
+      expect(first.request.context.get(SIMULATE_PHOTO_DELAY)).toBe(true);
+      expect(second.request.context.get(SIMULATE_PHOTO_DELAY)).toBe(true);
+
+      first.flush(TEST_PHOTO);
+      second.flush(secondPhoto);
 
       vi.advanceTimersByTime(300);
 
-      expect(photos).toHaveLength(1);
-      expect(photos[0].download_url).toBe(PHOTO_URL);
+      expect(received).toEqual([[TEST_PHOTO, secondPhoto]]);
     } finally {
+      seeds.mockRestore();
       vi.useRealTimers();
     }
   });
 
-  it('delays a successful response by the selected delay', () => {
-    vi.useFakeTimers();
-    const random = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+  it('reports a batch error and cancels the remaining requests', () => {
+    const seeds = vi
+      .spyOn(globalThis.crypto, 'randomUUID')
+      .mockReturnValueOnce('00000000-0000-4000-8000-000000000001')
+      .mockReturnValueOnce('00000000-0000-4000-8000-000000000002');
 
     try {
-      let received = false;
+      let status: number | undefined;
 
-      service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe(() => {
-        received = true;
+      service.getRandomPhotos(2).subscribe({
+        error: (error: { status: number }) => {
+          status = error.status;
+        },
       });
 
-      const request = http.expectOne(
-        (req) =>
-          req.url === PHOTO_LIST_URL &&
-          req.params.get('page') === '1' &&
-          req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
+      const first = http.expectOne(
+        'https://picsum.photos/seed/00000000-0000-4000-8000-000000000001/info',
+      );
+      const second = http.expectOne(
+        'https://picsum.photos/seed/00000000-0000-4000-8000-000000000002/info',
       );
 
-      request.flush([]);
+      first.flush('Service unavailable', {
+        status: 503,
+        statusText: 'Service Unavailable',
+      });
 
-      expect(received).toBe(false);
-
-      vi.advanceTimersByTime(249);
-      expect(received).toBe(false);
-
-      vi.advanceTimersByTime(1);
-      expect(received).toBe(true);
+      expect(status).toBe(503);
+      expect(second.cancelled).toBe(true);
     } finally {
-      random.mockRestore();
-      vi.useRealTimers();
+      seeds.mockRestore();
     }
   });
-
-  it('reports an HTTP error to the caller', () => {
-    let status: number | undefined;
-
-    service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe({
-      error: (error: { status: number }) => {
-        status = error.status;
-      },
-    });
-
-    const request = http.expectOne(
-      (req) =>
-        req.url === PHOTO_LIST_URL &&
-        req.params.get('page') === '1' &&
-        req.params.get('limit') === PHOTO_BATCH_SIZE.toString(),
-    );
-
-    request.flush('Service unavailable', {
-      status: 503,
-      statusText: 'Service Unavailable',
-    });
-
-    expect(status).toBe(503);
-  });
-
-  it.each([
-    { randomValue: 0, expectedDelay: 200 },
-    { randomValue: 0.999, expectedDelay: 300 },
-  ])(
-    'delivers a response after $expectedDelay ms',
-    ({ randomValue, expectedDelay }) => {
-      vi.useFakeTimers();
-      const random = vi.spyOn(Math, 'random').mockReturnValue(randomValue);
-
-      try {
-        let received = false;
-
-        service.getPhotos(1, PHOTO_BATCH_SIZE).subscribe(() => {
-          received = true;
-        });
-
-        const request = http.expectOne((req) => req.url === PHOTO_LIST_URL);
-
-        request.flush([]);
-
-        vi.advanceTimersByTime(expectedDelay - 1);
-        expect(received).toBe(false);
-
-        vi.advanceTimersByTime(1);
-        expect(received).toBe(true);
-      } finally {
-        random.mockRestore();
-        vi.useRealTimers();
-      }
-    },
-  );
 });

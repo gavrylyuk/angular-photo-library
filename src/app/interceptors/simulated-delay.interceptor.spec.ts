@@ -120,4 +120,49 @@ describe('simulatedDelayInterceptor', () => {
       vi.useRealTimers();
     }
   });
+
+  it.each([
+    { randomValue: 0, expectedDelay: 200 },
+    { randomValue: 0.999, expectedDelay: 300 },
+  ])(
+    'delivers an opted-in response after $expectedDelay ms',
+    ({ randomValue, expectedDelay }) => {
+      vi.useFakeTimers();
+      const random = vi.spyOn(Math, 'random').mockReturnValue(randomValue);
+
+      try {
+        TestBed.configureTestingModule({
+          providers: [
+            provideHttpClient(withInterceptors([simulatedDelayInterceptor])),
+            provideHttpClientTesting(),
+          ],
+        });
+
+        const http = TestBed.inject(HttpClient);
+        const requests = TestBed.inject(HttpTestingController);
+        let received = false;
+
+        http
+          .get('/test', {
+            context: new HttpContext().set(SIMULATE_PHOTO_DELAY, true),
+          })
+          .subscribe(() => {
+            received = true;
+          });
+
+        requests.expectOne('/test').flush({ message: 'ok' });
+
+        vi.advanceTimersByTime(expectedDelay - 1);
+        expect(received).toBe(false);
+
+        vi.advanceTimersByTime(1);
+        expect(received).toBe(true);
+
+        requests.verify();
+      } finally {
+        random.mockRestore();
+        vi.useRealTimers();
+      }
+    },
+  );
 });
