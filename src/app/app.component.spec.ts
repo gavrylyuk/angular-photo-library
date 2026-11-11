@@ -14,7 +14,7 @@ describe('AppComponent', () => {
       imports: [AppComponent],
       providers: [
         ...appConfig.providers,
-        { provide: PhotoService, useValue: { getPhotos: () => of([]) } },
+        { provide: PhotoService, useValue: { getRandomPhotos: () => of([]) } },
       ],
     }),
   );

@@ -1,9 +1,8 @@
 import { DestroyRef, inject, Service, signal } from '@angular/core';
-import { Photo } from '../models/photo';
-import { PhotoService } from './photo.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { shufflePhotos } from '@app/utils/shuffle-photos';
 import { PHOTO_BATCH_SIZE } from '@app/constants/photo-stream.constants';
+import { PhotoService } from './photo.service';
+import { Photo } from '@app/models/photo';
 
 @Service()
 export class PhotoStreamStore {
@@ -15,7 +14,6 @@ export class PhotoStreamStore {
   private readonly errorState = signal(false);
 
   private initialLoadStarted = false;
-  private nextPage = 1;
 
   readonly photos = this.photoState.asReadonly();
   readonly loading = this.loadingState.asReadonly();
@@ -30,24 +28,17 @@ export class PhotoStreamStore {
     this.loadingState.set(true);
 
     this.photoService
-      .getPhotos(this.nextPage, PHOTO_BATCH_SIZE)
+      .getRandomPhotos(PHOTO_BATCH_SIZE)
       // Cancel an active request if the store is destroyed.
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (photos: Photo[]) => {
+        next: (photos) => {
           if (photos.length === 0) {
-            if (this.nextPage === 1) {
-              this.errorState.set(true);
-            }
-
-            this.nextPage = 1;
+            this.errorState.set(true);
           } else {
-            this.photoState.update((current: Photo[]) => [
-              ...current,
-              ...shufflePhotos(photos),
-            ]);
-            this.nextPage += 1;
+            this.photoState.update((current) => [...current, ...photos]);
           }
+
           this.loadingState.set(false);
         },
         error: () => {

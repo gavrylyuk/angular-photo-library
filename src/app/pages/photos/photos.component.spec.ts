@@ -21,13 +21,13 @@ const TEST_PHOTO: Photo = {
 describe('PhotosComponent', () => {
   let photos$: Subject<Photo[]>;
   const photoService = {
-    getPhotos: vi.fn(),
+    getRandomPhotos: vi.fn(),
   };
 
   beforeEach(() => {
     photos$ = new Subject<Photo[]>();
-    photoService.getPhotos.mockReset();
-    photoService.getPhotos.mockReturnValue(photos$.asObservable());
+    photoService.getRandomPhotos.mockReset();
+    photoService.getRandomPhotos.mockReturnValue(photos$.asObservable());
 
     TestBed.configureTestingModule({
       imports: [PhotosComponent],
@@ -40,7 +40,9 @@ describe('PhotosComponent', () => {
 
     fixture.detectChanges();
 
-    expect(photoService.getPhotos).toHaveBeenCalledWith(1, PHOTO_BATCH_SIZE);
+    expect(photoService.getRandomPhotos).toHaveBeenLastCalledWith(
+      PHOTO_BATCH_SIZE,
+    );
   });
 
   it('displays photos returned by the service', () => {
@@ -98,7 +100,7 @@ describe('PhotosComponent', () => {
     fixture.detectChanges();
 
     const retryPhotos$ = new Subject<Photo[]>();
-    photoService.getPhotos.mockReturnValue(retryPhotos$.asObservable());
+    photoService.getRandomPhotos.mockReturnValue(retryPhotos$.asObservable());
 
     const element = fixture.nativeElement as HTMLElement;
     const retryButton = element.querySelector('button');
@@ -107,8 +109,10 @@ describe('PhotosComponent', () => {
     retryButton?.click();
     fixture.detectChanges();
 
-    expect(photoService.getPhotos).toHaveBeenCalledTimes(2);
-    expect(photoService.getPhotos).toHaveBeenCalledWith(1, PHOTO_BATCH_SIZE);
+    expect(photoService.getRandomPhotos).toHaveBeenCalledTimes(2);
+    expect(photoService.getRandomPhotos).toHaveBeenLastCalledWith(
+      PHOTO_BATCH_SIZE,
+    );
     expect(element.querySelector('[role="alert"]')).toBeNull();
     expect(element.querySelector('[role="status"]')).not.toBeNull();
 
@@ -128,7 +132,7 @@ describe('PhotosComponent', () => {
       fixture.detectChanges();
 
       const nextPhotos$ = new Subject<Photo[]>();
-      photoService.getPhotos.mockReturnValue(nextPhotos$.asObservable());
+      photoService.getRandomPhotos.mockReturnValue(nextPhotos$.asObservable());
 
       const element = fixture.nativeElement as HTMLElement;
       const button = Array.from(element.querySelectorAll('button')).find((b) =>
@@ -138,8 +142,10 @@ describe('PhotosComponent', () => {
       expect(button).toBeDefined();
       button?.click();
 
-      expect(photoService.getPhotos).toHaveBeenCalledTimes(2);
-      expect(photoService.getPhotos).toHaveBeenCalledWith(2, PHOTO_BATCH_SIZE);
+      expect(photoService.getRandomPhotos).toHaveBeenCalledTimes(2);
+      expect(photoService.getRandomPhotos).toHaveBeenLastCalledWith(
+        PHOTO_BATCH_SIZE,
+      );
     } finally {
       vi.unstubAllGlobals();
     }
@@ -204,15 +210,14 @@ describe('PhotosComponent', () => {
       fixture.detectChanges();
 
       const nextPhotos$ = new Subject<Photo[]>();
-      photoService.getPhotos.mockReturnValue(nextPhotos$.asObservable());
+      photoService.getRandomPhotos.mockReturnValue(nextPhotos$.asObservable());
 
       const entry = { isIntersecting: true } as IntersectionObserverEntry;
 
       expect(observerCallback).toBeDefined();
       observerCallback?.([entry], observer as unknown as IntersectionObserver);
 
-      expect(photoService.getPhotos).toHaveBeenLastCalledWith(
-        2,
+      expect(photoService.getRandomPhotos).toHaveBeenLastCalledWith(
         PHOTO_BATCH_SIZE,
       );
 
