@@ -1,9 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Photo } from '@app/models/photo';
 import { delay } from 'rxjs';
-
-const PHOTO_API_URL = 'https://picsum.photos/v2/list';
+import { PICSUM_BASE_URL } from '@app/constants/picsum.constants';
+import { Photo } from '@app/models/photo';
 
 @Service()
 export class PhotoService {
@@ -16,9 +15,11 @@ export class PhotoService {
       .set('page', page.toString())
       .set('limit', limit.toString());
 
-    return this.http.get<Photo[]>(PHOTO_API_URL, { params }).pipe(
-      // Simulate network delay for demonstration purposes
-      delay(delayMs),
-    );
+    return this.http
+      .get<Photo[]>(`${PICSUM_BASE_URL}/v2/list`, { params })
+      .pipe(
+        // Simulate network delay for demonstration purposes
+        delay(delayMs),
+      );
   }
 }
