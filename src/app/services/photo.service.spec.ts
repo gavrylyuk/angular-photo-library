@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -8,8 +8,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PhotoService } from './photo.service';
 import { Photo } from '@app/models/photo';
 import { PHOTO_BATCH_SIZE } from '@app/constants/photo-stream.constants';
+import {
+  SIMULATE_PHOTO_DELAY,
+  simulatedDelayInterceptor,
+} from '@app/interceptors/simulated-delay.interceptor';
 
 const PHOTO_LIST_URL = 'https://picsum.photos/v2/list';
+const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
+const TEST_PHOTO: Photo = {
+  id: '1',
+  author: 'Example photographer',
+  width: 500,
+  height: 300,
+  url: 'https://example.com/photo',
+  download_url: PHOTO_URL,
+};
 
 describe('PhotoService', () => {
   let service: PhotoService;
@@ -17,7 +30,10 @@ describe('PhotoService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptors([simulatedDelayInterceptor])),
+        provideHttpClientTesting(),
+      ],
     });
 
     service = TestBed.inject(PhotoService);
@@ -46,22 +62,13 @@ describe('PhotoService', () => {
       );
 
       expect(request.request.method).toBe('GET');
-
-      request.flush([
-        {
-          id: '1',
-          author: 'Example photographer',
-          width: 500,
-          height: 300,
-          url: 'https://picsum.photos/500/300',
-          download_url: 'https://picsum.photos/id/1/500/300',
-        },
-      ]);
+      expect(request.request.context.get(SIMULATE_PHOTO_DELAY)).toBe(true);
+      request.flush([TEST_PHOTO]);
 
       vi.advanceTimersByTime(300);
 
       expect(photos).toHaveLength(1);
-      expect(photos[0].download_url).toBe('https://picsum.photos/id/1/500/300');
+      expect(photos[0].download_url).toBe(PHOTO_URL);
     } finally {
       vi.useRealTimers();
     }
