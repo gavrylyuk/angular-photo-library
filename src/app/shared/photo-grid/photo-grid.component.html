@@ -1,0 +1,38 @@
+<ng-template #thumbnail let-photo>
+  <img
+    [src]="photoThumbnailUrl(photo.id)"
+    alt=""
+    width="500"
+    height="300"
+    loading="lazy"
+  />
+</ng-template>
+
+<div class="photo-grid">
+  @for (photo of photos(); track $index) {
+    @if (mode() === 'select') {
+      <button
+        type="button"
+        class="photo-item"
+        [attr.aria-label]="'Add photo by ' + photo.author + ' to favorites'"
+        (click)="photoSelected.emit(photo)"
+      >
+        <ng-container
+          [ngTemplateOutlet]="thumbnail"
+          [ngTemplateOutletContext]="{ $implicit: photo }"
+        />
+      </button>
+    } @else {
+      <a
+        class="photo-item"
+        [routerLink]="['/photos', photo.id]"
+        [attr.aria-label]="'View photo by ' + photo.author"
+      >
+        <ng-container
+          [ngTemplateOutlet]="thumbnail"
+          [ngTemplateOutletContext]="{ $implicit: photo }"
+        />
+      </a>
+    }
+  }
+</div>

@@ -1,14 +1,8 @@
-<div class="photo-grid">
-  @for (photo of store.photos(); track $index) {
-    <img
-      [src]="photoThumbnailUrl(photo.id)"
-      [alt]="'Photo by ' + photo.author"
-      [width]="500"
-      [height]="300"
-      loading="lazy"
-    />
-  }
-</div>
+<app-photo-grid
+  [photos]="store.photos()"
+  mode="select"
+  (photoSelected)="favorites.add($event)"
+/>
 
 <div #scrollSentinel class="scroll-sentinel" aria-hidden="true"></div>
 

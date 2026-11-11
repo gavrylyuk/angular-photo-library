@@ -1,31 +1,3 @@
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  padding: 0 1rem;
-}
-
-@media (max-width: 48rem) {
-  .photo-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 30rem) {
-  .photo-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.photo-grid img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 0.5rem;
-}
-
 .scroll-sentinel {
   height: 1px;
 }

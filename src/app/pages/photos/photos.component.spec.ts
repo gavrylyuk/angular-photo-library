@@ -1,10 +1,11 @@
+import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { Photo } from '../../models/photo';
-import { TestBed } from '@angular/core/testing';
 import { PhotosComponent } from './photos.component';
 import { PhotoService } from '../../services/photo.service';
 import { PHOTO_BATCH_SIZE } from '../../services/photo-stream.constants';
+import { FavoritesStore } from '../../services/favorites.store';
+import { Photo } from '../../models/photo';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {
@@ -45,23 +46,17 @@ describe('PhotosComponent', () => {
     const fixture = TestBed.createComponent(PhotosComponent);
     fixture.detectChanges();
 
-    photos$.next([
-      {
-        id: '1',
-        author: 'Example photographer',
-        width: 500,
-        height: 300,
-        url: 'https://example.com/photo',
-        download_url: PHOTO_URL,
-      },
-    ]);
+    photos$.next([TEST_PHOTO]);
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
     const image = element.querySelector('img');
 
     expect(image?.getAttribute('src')).toBe(PHOTO_URL);
-    expect(image?.getAttribute('alt')).toBe('Photo by Example photographer');
+    expect(image?.getAttribute('alt')).toBe('');
+    expect(image?.closest('button')?.getAttribute('aria-label')).toBe(
+      'Add photo by Example photographer to favorites',
+    );
   });
 
   it('shows a loading indicator until photos arrive', () => {
@@ -257,5 +252,29 @@ describe('PhotosComponent', () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+
+  it('adds a selected photo to favorites', () => {
+    const add = vi.fn();
+
+    TestBed.overrideProvider(FavoritesStore, {
+      useValue: { add },
+    });
+
+    const fixture = TestBed.createComponent(PhotosComponent);
+    fixture.detectChanges();
+
+    photos$.next([TEST_PHOTO]);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector<HTMLButtonElement>(
+      'button[aria-label="Add photo by Example photographer to favorites"]',
+    );
+
+    expect(button).not.toBeNull();
+    button?.click();
+
+    expect(add).toHaveBeenCalledWith(TEST_PHOTO);
   });
 });

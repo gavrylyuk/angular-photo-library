@@ -1,1 +1,5 @@
-<p>favorites works!</p>
+@if (favorites.photos().length === 0) {
+  <p>No favorites yet. Select a photo from Photos to save it here.</p>
+} @else {
+  <app-photo-grid [photos]="favorites.photos()" mode="navigate" />
+}
