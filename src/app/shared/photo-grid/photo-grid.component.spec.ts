@@ -21,26 +21,30 @@ describe('PhotoGridComponent', () => {
       imports: [PhotoGridComponent],
     });
 
-    const photo: Photo = TEST_PHOTO;
-
     const fixture = TestBed.createComponent(PhotoGridComponent);
-    fixture.componentRef.setInput('photos', [photo]);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
     fixture.componentRef.setInput('mode', 'select');
 
     const selected = vi.fn();
     fixture.componentInstance.photoSelected.subscribe(selected);
-
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
     const button = element.querySelector<HTMLButtonElement>(
       'button[aria-label="Add photo by Example photographer to favorites"]',
     );
 
     expect(button).not.toBeNull();
+    expect(button?.disabled).toBe(false);
+
     button?.click();
 
-    expect(selected).toHaveBeenCalledWith(photo);
+    expect(selected).toHaveBeenCalledWith(TEST_PHOTO);
   });
 
   it('links a photo to its detail page in navigate mode', () => {
@@ -49,20 +53,24 @@ describe('PhotoGridComponent', () => {
       providers: [provideRouter([])],
     });
 
-    const photo: Photo = TEST_PHOTO;
-
     const fixture = TestBed.createComponent(PhotoGridComponent);
-    fixture.componentRef.setInput('photos', [photo]);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
     fixture.componentRef.setInput('mode', 'navigate');
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    expect(image).not.toBeNull();
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
     const link = element.querySelector<HTMLAnchorElement>(
       'a[href="/photos/1"]',
     );
 
     expect(link).not.toBeNull();
-    expect(link?.querySelector('img')).not.toBeNull();
   });
 
   it('indicates when a photo is already saved', () => {
@@ -85,5 +93,86 @@ describe('PhotoGridComponent', () => {
     expect(button?.querySelector('.favorite-badge')?.textContent).toContain(
       'Saved',
     );
+  });
+
+  it('prevents selecting a photo until its image loads', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoGridComponent],
+    });
+
+    const fixture = TestBed.createComponent(PhotoGridComponent);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
+    fixture.componentRef.setInput('mode', 'select');
+
+    const selected = vi.fn();
+    fixture.componentInstance.photoSelected.subscribe(selected);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector<HTMLButtonElement>('button');
+    const image = element.querySelector('img');
+
+    expect(button?.disabled).toBe(true);
+    button?.click();
+    expect(selected).not.toHaveBeenCalled();
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
+    expect(button?.disabled).toBe(false);
+    button?.click();
+    expect(selected).toHaveBeenCalledWith(TEST_PHOTO);
+  });
+
+  it('does not select a photo when its image fails', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoGridComponent],
+    });
+
+    const fixture = TestBed.createComponent(PhotoGridComponent);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
+    fixture.componentRef.setInput('mode', 'select');
+
+    const selected = vi.fn();
+    fixture.componentInstance.photoSelected.subscribe(selected);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+    const button = element.querySelector<HTMLButtonElement>('button');
+
+    image?.dispatchEvent(new Event('error'));
+    fixture.detectChanges();
+
+    expect(element.textContent).toContain('Image unavailable');
+    expect(button?.disabled).toBe(true);
+
+    button?.click();
+    expect(selected).not.toHaveBeenCalled();
+  });
+
+  it('does not provide a detail link when an image fails', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoGridComponent],
+      providers: [provideRouter([])],
+    });
+
+    const fixture = TestBed.createComponent(PhotoGridComponent);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
+    fixture.componentRef.setInput('mode', 'navigate');
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    image?.dispatchEvent(new Event('error'));
+    fixture.detectChanges();
+
+    const link = element.querySelector('a');
+
+    expect(element.textContent).toContain('Image unavailable');
+    expect(link?.getAttribute('href')).toBeNull();
+    expect(link?.getAttribute('aria-disabled')).toBe('true');
+    expect(link?.getAttribute('tabindex')).toBe('-1');
   });
 });

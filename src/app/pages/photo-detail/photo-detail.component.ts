@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import {
   ActivatedRoute,
   convertToParamMap,
@@ -8,10 +8,12 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { FavoritesStore } from '../../services/favorites.store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ImageLoadState } from '../../models/image-load-state';
 
 @Component({
   selector: 'app-photo-detail',
-  imports: [MatButtonModule, RouterLink],
+  imports: [MatButtonModule, MatProgressSpinnerModule, RouterLink],
   templateUrl: './photo-detail.component.html',
   styleUrl: './photo-detail.component.scss',
 })
@@ -37,5 +39,10 @@ export class PhotoDetailComponent {
   readonly photo = computed(() => {
     const id = this.params().get('id');
     return this.favorites.photos().find((favorite) => favorite.id === id);
+  });
+
+  readonly imageState = linkedSignal({
+    source: () => this.photo()?.id,
+    computation: (): ImageLoadState => 'loading',
   });
 }
