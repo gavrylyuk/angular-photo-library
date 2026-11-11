@@ -1,5 +1,10 @@
 @if (favorites.photos().length === 0) {
-  <p>No favorites yet. Select a photo from Photos to save it here.</p>
+  <section class="empty-state" aria-labelledby="empty-favorites-title">
+    <h1 id="empty-favorites-title">No favorites yet</h1>
+    <p>Select a photo from Photos to save it here.</p>
+
+    <a mat-flat-button routerLink="/">Browse photos</a>
+  </section>
 } @else {
   <app-photo-grid [photos]="favorites.photos()" mode="navigate" />
 }

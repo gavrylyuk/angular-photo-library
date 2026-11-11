@@ -1,1 +1,20 @@
-<p>photo-detail works!</p>
+@if (photo(); as selectedPhoto) {
+  <div class="photo-detail">
+    <img
+      [src]="selectedPhoto.download_url"
+      [alt]="'Photo by ' + selectedPhoto.author"
+      [width]="selectedPhoto.width"
+      [height]="selectedPhoto.height"
+    />
+    <button mat-flat-button type="button" (click)="removeFromFavorites()">
+      Remove from favorites
+    </button>
+  </div>
+} @else {
+  <section class="empty-state" aria-labelledby="photo-not-found-title">
+    <h1 id="photo-not-found-title">Photo not found in favorites.</h1>
+    <p>The photo may have been removed from your Favorites library.</p>
+
+    <a mat-flat-button routerLink="/favorites">Back to favorites</a>
+  </section>
+}

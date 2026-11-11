@@ -83,4 +83,34 @@ describe('AppComponent', () => {
     button?.click();
     expect(retryPersistence).toHaveBeenCalledOnce();
   });
+
+  it('navigates to the photo detail route', async () => {
+    const router = TestBed.inject(Router);
+
+    const navigated = await router.navigateByUrl('/photos/1');
+
+    expect(navigated).toBe(true);
+    expect(router.routerState.snapshot.root.firstChild?.routeConfig?.path).toBe(
+      'photos/:id',
+    );
+  });
+
+  it('highlights Favorites on the photo detail page', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/photos/0');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const favoritesLink = element.querySelector<HTMLAnchorElement>(
+      'a[href="/favorites"]',
+    );
+
+    expect(favoritesLink?.classList.contains('active')).toBe(true);
+
+    // The link itself is not the current page.
+    expect(favoritesLink?.getAttribute('aria-current')).toBeNull();
+  });
 });
