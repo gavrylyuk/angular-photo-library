@@ -9,22 +9,21 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PhotoStreamStore } from '../../services/photo-stream.store';
 import { MatButtonModule } from '@angular/material/button';
-import { photoThumbnailUrl } from '../../utils/photo-thumbnail-url';
+import { PhotoStreamStore } from '../../services/photo-stream.store';
+import { FavoritesStore } from '../../services/favorites.store';
+import { PhotoGridComponent } from '../../shared/photo-grid/photo-grid.component';
 
 @Component({
   selector: 'app-photos',
-  imports: [MatButtonModule, MatProgressSpinnerModule],
+  imports: [PhotoGridComponent, MatButtonModule, MatProgressSpinnerModule],
   styleUrl: './photos.component.scss',
   templateUrl: './photos.component.html',
 })
 export class PhotosComponent implements OnInit, AfterViewInit {
   readonly store = inject(PhotoStreamStore);
-
+  readonly favorites = inject(FavoritesStore);
   readonly supportsInfiniteScroll = typeof IntersectionObserver !== 'undefined';
-
-  readonly photoThumbnailUrl = photoThumbnailUrl;
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly scrollSentinel =

@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { appConfig } from './app.config';
 import { PhotoService } from './services/photo.service';
 import { of } from 'rxjs';
+import { FavoritesStore } from './services/favorites.store';
+import { signal } from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(() =>
@@ -16,18 +18,6 @@ describe('AppComponent', () => {
       ],
     }),
   );
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'gallery-template'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('gallery-template');
-  });
 
   it('provides navigation to photos and favorites', () => {
     const fixture = TestBed.createComponent(AppComponent);
@@ -66,5 +56,31 @@ describe('AppComponent', () => {
 
     expect(photos?.getAttribute('aria-current')).toBeNull();
     expect(favorites?.getAttribute('aria-current')).toBe('page');
+  });
+
+  it('offers a retry when favorites cannot be saved', () => {
+    const retryPersistence = vi.fn();
+
+    TestBed.overrideProvider(FavoritesStore, {
+      useValue: {
+        persistenceError: signal(true),
+        retryPersistence,
+      },
+    });
+
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const alert = element.querySelector('[role="alert"]');
+    const button = Array.from(element.querySelectorAll('button')).find((item) =>
+      item.textContent?.includes('Retry saving'),
+    );
+
+    expect(alert?.textContent).toContain('Favorites could not be saved');
+    expect(button).toBeDefined();
+
+    button?.click();
+    expect(retryPersistence).toHaveBeenCalledOnce();
   });
 });
