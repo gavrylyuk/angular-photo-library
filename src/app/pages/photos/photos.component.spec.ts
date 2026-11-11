@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Subject } from 'rxjs';
 import { Photo } from '@app/models/photo';
 import { PhotoService } from '@app/services/photo.service';
-import { PHOTO_BATCH_SIZE } from '@app/services/photo-stream.constants';
 import { FavoritesStore } from '@app/services/favorites.store';
 import { PhotosComponent } from './photos.component';
+import { PHOTO_BATCH_SIZE } from '@app/constants/photo-stream.constants';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {

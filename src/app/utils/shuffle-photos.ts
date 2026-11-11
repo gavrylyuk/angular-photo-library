@@ -1,4 +1,4 @@
-import { Photo } from '../models/photo';
+import { Photo } from "@app/models/photo";
 
 export const shufflePhotos = (photos: Photo[]): Photo[] => {
   const shuffled = [...photos];

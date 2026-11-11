@@ -1,6 +1,5 @@
-import { Photo } from '../models/photo';
-
-const STORAGE_KEY = 'photo-library:favorites';
+import { FAVORITES_STORAGE_KEY } from '@app/constants/favorites.constants';
+import { Photo } from '@app/models/photo';
 
 const isPhoto = (value: unknown): value is Photo => {
   if (typeof value !== 'object' || value === null) {
@@ -21,7 +20,7 @@ const isPhoto = (value: unknown): value is Photo => {
 
 export const readFavorites = (): Photo[] => {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
 
     if (!saved) {
       return [];
@@ -36,5 +35,5 @@ export const readFavorites = (): Photo[] => {
 };
 
 export const saveFavorites = (photos: Photo[]): void => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+  localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(photos));
 };
