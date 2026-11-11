@@ -1,0 +1,16 @@
+.scroll-sentinel {
+  height: 1px;
+}
+
+.loading,
+.load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.loading-label {
+  font: var(--mat-sys-body-large);
+}

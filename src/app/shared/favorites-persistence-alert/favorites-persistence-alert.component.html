@@ -1,0 +1,15 @@
+@if (favorites.persistenceError()) {
+  <div>
+    <p role="alert">
+      Favorites could not be saved. Changes may be lost when you close or
+      refresh the page.
+    </p>
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="favorites.retryPersistence()"
+    >
+      Retry saving
+    </button>
+  </div>
+}

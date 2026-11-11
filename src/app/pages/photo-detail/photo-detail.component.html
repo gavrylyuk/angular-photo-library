@@ -1,0 +1,34 @@
+@if (photo(); as selectedPhoto) {
+  <div class="photo-detail">
+    <div class="image-frame">
+      <img
+        [src]="selectedPhoto.download_url"
+        [alt]="'Photo by ' + selectedPhoto.author"
+        [width]="selectedPhoto.width"
+        [height]="selectedPhoto.height"
+        [class.image-hidden]="imageState() !== 'loaded'"
+        (load)="imageState.set('loaded')"
+        (error)="imageState.set('error')"
+      />
+
+      @if (imageState() === 'loading') {
+        <div class="image-status" role="status">
+          <mat-spinner aria-hidden="true" diameter="48" />
+          <span>Loading photo…</span>
+        </div>
+      } @else if (imageState() === 'error') {
+        <div class="image-status" role="alert">Unable to load the photo.</div>
+      }
+    </div>
+    <button mat-flat-button type="button" (click)="removeFromFavorites()">
+      Remove from favorites
+    </button>
+  </div>
+} @else {
+  <section class="empty-state" aria-labelledby="photo-not-found-title">
+    <h1 id="photo-not-found-title">Photo not found in favorites.</h1>
+    <p>The photo may have been removed from your Favorites library.</p>
+
+    <a mat-flat-button routerLink="/favorites">Back to favorites</a>
+  </section>
+}

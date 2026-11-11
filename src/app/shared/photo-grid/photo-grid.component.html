@@ -1,0 +1,37 @@
+<div class="photo-grid">
+  @for (photo of photos(); track $index) {
+    @let saved = favoriteIds().has(photo.id);
+
+    <div class="photo-item">
+      <app-photo-thumbnail #thumbnail [photo]="photo" />
+
+      @if (mode() === 'select') {
+        <button
+          type="button"
+          class="photo-action"
+          [disabled]="thumbnail.state() !== 'loaded'"
+          [attr.aria-label]="
+            saved
+              ? 'Photo by ' + photo.author + ' is already in favorites'
+              : 'Add photo by ' + photo.author + ' to favorites'
+          "
+          (click)="photoSelected.emit(photo)"
+        >
+          @if (saved) {
+            <span class="favorite-badge" aria-hidden="true">Saved</span>
+          }
+        </button>
+      } @else {
+        <a
+          class="photo-action"
+          [routerLink]="
+            thumbnail.state() === 'loaded' ? ['/photos', photo.id] : null
+          "
+          [attr.aria-disabled]="thumbnail.state() !== 'loaded' ? 'true' : null"
+          [attr.tabindex]="thumbnail.state() !== 'loaded' ? -1 : null"
+          [attr.aria-label]="'View photo by ' + photo.author"
+        ></a>
+      }
+    </div>
+  }
+</div>

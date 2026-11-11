@@ -1,0 +1,20 @@
+<div class="thumbnail">
+  <img
+    [src]="photoThumbnailUrl(photo().id)"
+    [class.image-loading]="state() !== 'loaded'"
+    alt=""
+    [width]="thumbnailWidth"
+    [height]="thumbnailHeight"
+    loading="lazy"
+    (load)="state.set('loaded')"
+    (error)="state.set('error')"
+  />
+
+  @if (state() === 'loading') {
+    <div class="thumbnail-placeholder" aria-hidden="true"></div>
+  }
+
+  @if (state() === 'error') {
+    <div class="thumbnail-error">Image unavailable</div>
+  }
+</div>

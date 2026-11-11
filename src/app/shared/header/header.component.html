@@ -1,0 +1,23 @@
+<header>
+  <nav aria-label="Main navigation">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+    >
+      Photos
+    </a>
+    <a
+      mat-button
+      routerLink="/favorites"
+      routerLinkActive=""
+      #favoritesLink="routerLinkActive"
+      [class.active]="favoritesLink.isActive || isPhotoDetail()"
+      ariaCurrentWhenActive="page"
+    >
+      Favorites
+    </a>
+  </nav>
+</header>
