@@ -10,17 +10,25 @@
 
 <div class="photo-grid">
   @for (photo of photos(); track $index) {
+    @let saved = favoriteIds().has(photo.id);
     @if (mode() === 'select') {
       <button
         type="button"
         class="photo-item"
-        [attr.aria-label]="'Add photo by ' + photo.author + ' to favorites'"
+        [attr.aria-label]="
+          saved
+            ? 'Photo by ' + photo.author + ' is already in favorites'
+            : 'Add photo by ' + photo.author + ' to favorites'
+        "
         (click)="photoSelected.emit(photo)"
       >
         <ng-container
           [ngTemplateOutlet]="thumbnail"
           [ngTemplateOutletContext]="{ $implicit: photo }"
         />
+        @if (saved) {
+          <span class="favorite-badge" aria-hidden="true">Saved</span>
+        }
       </button>
     } @else {
       <a

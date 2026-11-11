@@ -6,6 +6,7 @@ import { PhotoService } from '../../services/photo.service';
 import { PHOTO_BATCH_SIZE } from '../../services/photo-stream.constants';
 import { FavoritesStore } from '../../services/favorites.store';
 import { Photo } from '../../models/photo';
+import { signal } from '@angular/core';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {
@@ -258,7 +259,10 @@ describe('PhotosComponent', () => {
     const add = vi.fn();
 
     TestBed.overrideProvider(FavoritesStore, {
-      useValue: { add },
+      useValue: {
+        add,
+        photos: signal([]),
+      },
     });
 
     const fixture = TestBed.createComponent(PhotosComponent);
@@ -276,5 +280,40 @@ describe('PhotosComponent', () => {
     button?.click();
 
     expect(add).toHaveBeenCalledWith(TEST_PHOTO);
+  });
+
+  it('marks a photo as saved after selecting it', () => {
+    const savedPhotos = signal<Photo[]>([]);
+
+    TestBed.overrideProvider(FavoritesStore, {
+      useValue: {
+        photos: savedPhotos,
+        add: (photo: Photo) =>
+          savedPhotos.update((photos) => [...photos, photo]),
+      },
+    });
+
+    const fixture = TestBed.createComponent(PhotosComponent);
+    fixture.detectChanges();
+
+    photos$.next([TEST_PHOTO]);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector<HTMLButtonElement>(
+      'button[aria-label="Add photo by Example photographer to favorites"]',
+    );
+
+    expect(button).not.toBeNull();
+
+    button?.click();
+    fixture.detectChanges();
+
+    expect(button?.getAttribute('aria-label')).toBe(
+      'Photo by Example photographer is already in favorites',
+    );
+    expect(button?.querySelector('.favorite-badge')?.textContent).toContain(
+      'Saved',
+    );
   });
 });

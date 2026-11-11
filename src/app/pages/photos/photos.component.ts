@@ -2,6 +2,7 @@ import {
   afterRenderEffect,
   AfterViewInit,
   Component,
+  computed,
   DestroyRef,
   ElementRef,
   inject,
@@ -23,6 +24,10 @@ import { PhotoGridComponent } from '../../shared/photo-grid/photo-grid.component
 export class PhotosComponent implements OnInit, AfterViewInit {
   readonly store = inject(PhotoStreamStore);
   readonly favorites = inject(FavoritesStore);
+  readonly favoriteIds = computed(
+    () => new Set(this.favorites.photos().map((photo) => photo.id)),
+  );
+
   readonly supportsInfiniteScroll = typeof IntersectionObserver !== 'undefined';
 
   private readonly destroyRef = inject(DestroyRef);
