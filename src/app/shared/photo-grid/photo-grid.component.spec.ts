@@ -64,4 +64,26 @@ describe('PhotoGridComponent', () => {
     expect(link).not.toBeNull();
     expect(link?.querySelector('img')).not.toBeNull();
   });
+
+  it('indicates when a photo is already saved', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoGridComponent],
+    });
+
+    const fixture = TestBed.createComponent(PhotoGridComponent);
+    fixture.componentRef.setInput('photos', [TEST_PHOTO]);
+    fixture.componentRef.setInput('mode', 'select');
+    fixture.componentRef.setInput('favoriteIds', new Set(['1']));
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const button = element.querySelector<HTMLButtonElement>('button');
+
+    expect(button?.getAttribute('aria-label')).toBe(
+      'Photo by Example photographer is already in favorites',
+    );
+    expect(button?.querySelector('.favorite-badge')?.textContent).toContain(
+      'Saved',
+    );
+  });
 });

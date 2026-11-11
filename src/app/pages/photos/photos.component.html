@@ -1,5 +1,6 @@
 <app-photo-grid
   [photos]="store.photos()"
+  [favoriteIds]="favoriteIds()"
   mode="select"
   (photoSelected)="favorites.add($event)"
 />
