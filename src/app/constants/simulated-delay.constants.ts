@@ -1,0 +1,2 @@
+export const MIN_SIMULATED_DELAY_MS = 200;
+export const MAX_SIMULATED_DELAY_MS = 300;

@@ -1,12 +1,13 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { simulatedDelayInterceptor } from './interceptors/simulated-delay.interceptor';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideZoneChangeDetection(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([simulatedDelayInterceptor])),
   ],
 };
