@@ -1,23 +1,22 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  isActive,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet,
-} from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+
 import { FavoritesStore } from './services/favorites.store';
+import { HeaderComponent } from './shared/header/header.component';
+import { FavoritesPersistenceAlertComponent } from './shared/favorites-persistence-alert/favorites-persistence-alert.component';
 
 @Component({
   selector: 'app-root',
-  imports: [MatButtonModule, RouterOutlet, RouterLinkActive, RouterLink],
+  imports: [
+    HeaderComponent,
+    FavoritesPersistenceAlertComponent,
+    MatButtonModule,
+    RouterOutlet,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  private readonly router = inject(Router);
-
-  readonly isPhotoDetail = isActive('/photos', this.router);
   readonly favorites = inject(FavoritesStore);
 }

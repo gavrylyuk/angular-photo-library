@@ -1,42 +1,5 @@
-<header>
-  <nav aria-label="Main navigation">
-    <a
-      mat-button
-      routerLink="/"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      ariaCurrentWhenActive="page"
-    >
-      Photos
-    </a>
-    <a
-      mat-button
-      routerLink="/favorites"
-      routerLinkActive=""
-      #favoritesLink="routerLinkActive"
-      [class.active]="favoritesLink.isActive || isPhotoDetail()"
-      ariaCurrentWhenActive="page"
-    >
-      Favorites
-    </a>
-  </nav>
-</header>
-
-@if (favorites.persistenceError()) {
-  <div>
-    <p role="alert">
-      Favorites could not be saved. Changes may be lost when you close or
-      refresh the page.
-    </p>
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="favorites.retryPersistence()"
-    >
-      Retry saving
-    </button>
-  </div>
-}
+<app-header />
+<app-favorites-persistence-alert />
 
 <main>
   <router-outlet />
