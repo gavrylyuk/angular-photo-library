@@ -12,7 +12,9 @@
     <a
       mat-button
       routerLink="/favorites"
-      routerLinkActive="active"
+      routerLinkActive=""
+      #favoritesLink="routerLinkActive"
+      [class.active]="favoritesLink.isActive || isPhotoDetail()"
       ariaCurrentWhenActive="page"
     >
       Favorites

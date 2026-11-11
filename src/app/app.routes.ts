@@ -14,7 +14,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'photo/:id',
+    path: 'photos/:id',
     loadComponent: () =>
       import('./pages/photo-detail/photo-detail.component').then(
         (m) => m.PhotoDetailComponent,
