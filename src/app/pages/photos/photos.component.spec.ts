@@ -52,12 +52,13 @@ describe('PhotosComponent', () => {
 
     const element = fixture.nativeElement as HTMLElement;
     const image = element.querySelector('img');
+    const button = element.querySelector<HTMLButtonElement>(
+      'button[aria-label="Add photo by Example photographer to favorites"]',
+    );
 
     expect(image?.getAttribute('src')).toBe(PHOTO_URL);
     expect(image?.getAttribute('alt')).toBe('');
-    expect(image?.closest('button')?.getAttribute('aria-label')).toBe(
-      'Add photo by Example photographer to favorites',
-    );
+    expect(button).not.toBeNull();
   });
 
   it('shows a loading indicator until photos arrive', () => {
@@ -272,11 +273,18 @@ describe('PhotosComponent', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
     const button = element.querySelector<HTMLButtonElement>(
       'button[aria-label="Add photo by Example photographer to favorites"]',
     );
 
     expect(button).not.toBeNull();
+    expect(button?.disabled).toBe(false);
+
     button?.click();
 
     expect(add).toHaveBeenCalledWith(TEST_PHOTO);
@@ -300,6 +308,11 @@ describe('PhotosComponent', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
     const button = element.querySelector<HTMLButtonElement>(
       'button[aria-label="Add photo by Example photographer to favorites"]',
     );

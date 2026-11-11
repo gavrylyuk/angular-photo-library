@@ -37,10 +37,16 @@ describe('FavoritesComponent', () => {
     fixture.detectChanges();
 
     const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    expect(image).not.toBeNull();
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
     const link = element.querySelector('a[href="/photos/1"]');
 
     expect(link).not.toBeNull();
-    expect(link?.querySelector('img')).not.toBeNull();
   });
 
   it('shows a message when there are no favorites', () => {

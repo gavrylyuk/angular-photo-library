@@ -21,3 +21,23 @@
 .photo-detail button {
   justify-self: center;
 }
+
+.image-frame {
+  position: relative;
+  min-height: 0;
+}
+
+.image-hidden {
+  visibility: hidden;
+}
+
+.image-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}

@@ -18,9 +18,14 @@
 }
 
 .photo-item {
-  display: block;
   position: relative;
+}
+
+.photo-action {
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
   padding: 0;
   border: 0;
   border-radius: 0.5rem;
@@ -28,18 +33,14 @@
   cursor: pointer;
 }
 
-.photo-item:focus-visible {
+.photo-action:focus-visible {
   outline: 3px solid var(--mat-sys-primary);
   outline-offset: 3px;
 }
 
-.photo-item img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 0.5rem;
+.photo-action:disabled,
+.photo-action[aria-disabled='true'] {
+  cursor: default;
 }
 
 .favorite-badge {

@@ -115,4 +115,65 @@ describe('PhotoDetailComponent', () => {
     expect(element.querySelector('button')).toBeNull();
     expect(element.querySelector('a[href="/favorites"]')).not.toBeNull();
   });
+
+  it('shows a loading indicator until the photo loads', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoDetailComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({ id: '1' })) },
+        },
+        {
+          provide: FavoritesStore,
+          useValue: { photos: signal([TEST_PHOTO]) },
+        },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(PhotoDetailComponent);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    expect(element.querySelector('[role="status"]')).not.toBeNull();
+
+    image?.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
+    expect(element.querySelector('[role="status"]')).toBeNull();
+  });
+
+  it('shows an error when the detail image fails to load', () => {
+    TestBed.configureTestingModule({
+      imports: [PhotoDetailComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({ id: '1' })) },
+        },
+        {
+          provide: FavoritesStore,
+          useValue: { photos: signal([TEST_PHOTO]) },
+        },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(PhotoDetailComponent);
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const image = element.querySelector('img');
+
+    image?.dispatchEvent(new Event('error'));
+    fixture.detectChanges();
+
+    expect(element.querySelector('[role="status"]')).toBeNull();
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
+      'Unable to load the photo',
+    );
+  });
 });
