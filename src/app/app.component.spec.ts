@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Router } from '@angular/router';
-import { AppComponent } from './app.component';
-import { appConfig } from './app.config';
-import { PhotoService } from './services/photo.service';
 import { of } from 'rxjs';
-import { FavoritesStore } from './services/favorites.store';
 import { signal } from '@angular/core';
+import { appConfig } from './app.config';
+import { AppComponent } from './app.component';
+import { PhotoService } from './services/photo.service';
+import { FavoritesStore } from './services/favorites.store';
 
 describe('AppComponent', () => {
   beforeEach(() =>

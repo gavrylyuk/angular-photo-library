@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FavoritesStore } from './favorites.store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Photo } from '../models/photo';
+import { Photo } from '@app/models/photo';
 
 const STORAGE_KEY = 'photo-library:favorites';
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';

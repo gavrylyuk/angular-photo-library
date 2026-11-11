@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Photo } from '../models/photo';
+import { Photo } from '@app/models/photo';
 import { delay } from 'rxjs';
 
 const PHOTO_API_URL = 'https://picsum.photos/v2/list';

@@ -1,8 +1,7 @@
 import { Component, input, linkedSignal } from '@angular/core';
-
-import { Photo } from '../../models/photo';
-import { photoThumbnailUrl } from '../../utils/photo-thumbnail-url';
-import { ImageLoadState } from '../../models/image-load-state';
+import { ImageLoadState } from '@app/models/image-load-state';
+import { Photo } from '@app/models/photo';
+import { photoThumbnailUrl } from '@app/utils/photo-thumbnail-url';
 
 @Component({
   selector: 'app-photo-thumbnail',

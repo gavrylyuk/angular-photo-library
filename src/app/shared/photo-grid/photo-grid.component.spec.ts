@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, expect, it, vi } from 'vitest';
-
-import { Photo } from '../../models/photo';
-import { PhotoGridComponent } from './photo-grid.component';
 import { provideRouter } from '@angular/router';
+import { Photo } from '@app/models/photo';
+import { PhotoGridComponent } from './photo-grid.component';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {

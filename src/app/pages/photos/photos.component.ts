@@ -11,9 +11,9 @@ import {
 } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
-import { PhotoStreamStore } from '../../services/photo-stream.store';
-import { FavoritesStore } from '../../services/favorites.store';
-import { PhotoGridComponent } from '../../shared/photo-grid/photo-grid.component';
+import { PhotoGridComponent } from '@app/shared/photo-grid/photo-grid.component';
+import { PhotoStreamStore } from '@app/services/photo-stream.store';
+import { FavoritesStore } from '@app/services/favorites.store';
 
 @Component({
   selector: 'app-photos',

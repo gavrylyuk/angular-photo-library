@@ -6,11 +6,10 @@ import {
   provideRouter,
   Router,
 } from '@angular/router';
+import { Photo } from '@app/models/photo';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
-
-import { Photo } from '../../models/photo';
-import { FavoritesStore } from '../../services/favorites.store';
+import { FavoritesStore } from '@app/services/favorites.store';
 import { PhotoDetailComponent } from './photo-detail.component';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';

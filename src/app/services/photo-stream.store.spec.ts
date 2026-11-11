@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { PhotoStreamStore } from './photo-stream.store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { Photo } from '../models/photo';
+import { Photo } from '@app/models/photo';
 import { PhotoService } from './photo.service';
 import { PHOTO_BATCH_SIZE } from './photo-stream.constants';
 

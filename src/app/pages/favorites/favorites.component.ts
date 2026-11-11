@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { FavoritesStore } from '../../services/favorites.store';
-import { PhotoGridComponent } from '../../shared/photo-grid/photo-grid.component';
+import { PhotoGridComponent } from '@app/shared/photo-grid/photo-grid.component';
+import { FavoritesStore } from '@app/services/favorites.store';
 
 @Component({
   imports: [MatButtonModule, PhotoGridComponent, RouterLink],
