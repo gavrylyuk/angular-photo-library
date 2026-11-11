@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Photo } from '../../models/photo';
 import { PhotoThumbnailComponent } from '../photo-thumbnail/photo-thumbnail.component';
+import { Photo } from '@app/models/photo';
 
 export type PhotoGridMode = 'select' | 'navigate';
 

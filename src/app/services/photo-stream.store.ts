@@ -2,8 +2,8 @@ import { DestroyRef, inject, Service, signal } from '@angular/core';
 import { Photo } from '../models/photo';
 import { PhotoService } from './photo.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { shufflePhotos } from '../utils/shuffle-photos';
 import { PHOTO_BATCH_SIZE } from './photo-stream.constants';
+import { shufflePhotos } from '@app/utils/shuffle-photos';
 
 @Service()
 export class PhotoStreamStore {

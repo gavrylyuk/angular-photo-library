@@ -5,11 +5,11 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { FavoritesStore } from '../../services/favorites.store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ImageLoadState } from '../../models/image-load-state';
+import { MatButtonModule } from '@angular/material/button';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ImageLoadState } from '@app/models/image-load-state';
+import { FavoritesStore } from '@app/services/favorites.store';
 
 @Component({
   selector: 'app-photo-detail',

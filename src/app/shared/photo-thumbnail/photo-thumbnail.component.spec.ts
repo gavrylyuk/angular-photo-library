@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { Photo } from '@app/models/photo';
 import { describe, expect, it } from 'vitest';
-
-import { Photo } from '../../models/photo';
 import { PhotoThumbnailComponent } from './photo-thumbnail.component';
 
 const TEST_PHOTO: Photo = {

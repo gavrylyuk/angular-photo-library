@@ -1,6 +1,6 @@
 import { Service, signal } from '@angular/core';
-import { Photo } from '../models/photo';
-import { readFavorites, saveFavorites } from '../utils/favorites-storage';
+import { Photo } from '@app/models/photo';
+import { readFavorites, saveFavorites } from '@app/utils/favorites-storage';
 
 @Service()
 export class FavoritesStore {

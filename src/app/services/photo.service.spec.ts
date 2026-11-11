@@ -6,7 +6,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PhotoService } from './photo.service';
-import { Photo } from '../models/photo';
+import { Photo } from '@app/models/photo';
 import { PHOTO_BATCH_SIZE } from './photo-stream.constants';
 
 const PHOTO_LIST_URL = 'https://picsum.photos/v2/list';

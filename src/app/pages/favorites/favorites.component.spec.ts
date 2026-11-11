@@ -2,9 +2,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Photo } from '@app/models/photo';
+import { FavoritesStore } from '@app/services/favorites.store';
 import { FavoritesComponent } from './favorites.component';
-import { Photo } from '../../models/photo';
-import { FavoritesStore } from '../../services/favorites.store';
 
 const PHOTO_URL = 'https://picsum.photos/id/1/500/300';
 const TEST_PHOTO: Photo = {

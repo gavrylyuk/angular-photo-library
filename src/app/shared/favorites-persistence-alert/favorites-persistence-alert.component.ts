@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-
-import { FavoritesStore } from '../../services/favorites.store';
+import { FavoritesStore } from '@app/services/favorites.store';
 
 @Component({
   selector: 'app-favorites-persistence-alert',
